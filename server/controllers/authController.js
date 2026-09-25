@@ -1,7 +1,33 @@
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { User } from "../Models/user.model.js"
+import { success } from "zod";
 
+export const registerUser=async(req,res,next)=>{
+    try{
+        const {userName,email,password}=req.body;
+        const existing=await User.findOne({email});
+        if(existing){
+            return res.status(409).json({success:false,message:"Email already exists"});
+        }
+
+        const hasshedPassword= await bcrypt.hash(password,10);
+        const user = await User.create(
+            {
+                userName,
+                email,
+                password:hasshedPassword,
+            }
+        )
+
+        res.status(201).json({
+            success:true,
+            data:user,
+        })
+    }catch(error){
+        next(error);
+    }
+}
 
 export const registerAdmin = async(req ,res,next)=>{
     try {
@@ -24,6 +50,7 @@ export const registerAdmin = async(req ,res,next)=>{
             userName,
             email,
             password: hasshedPassword,
+            role:"admin"
         });
 
         res.status(201).json({

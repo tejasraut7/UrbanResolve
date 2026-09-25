@@ -22,6 +22,11 @@ const complaintSchema = new Schema({
             // required: true,
         },
     },
+    submittedBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+
+    },
     userCategory: {
         type: String, // Fixed: was "string"
         enum: ["Waste", "Water", "Road", "Electricity", "Sanitation", "Other"],

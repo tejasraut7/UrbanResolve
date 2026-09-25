@@ -1,3 +1,4 @@
+import dns from 'dns';
 import "dotenv/config";
 import mongoose from "mongoose";
 import app from "./app.js";
@@ -7,6 +8,8 @@ console.log("ENV CHECK:", {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
   port: process.env.PORT,
 });
+
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
