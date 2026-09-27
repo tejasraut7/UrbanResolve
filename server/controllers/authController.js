@@ -90,3 +90,31 @@ export const loginAdmin = async (req,res,next)=>{
         next(error)
     }
 }
+
+export const loginUser = async (req,res,next)=>{
+    try {
+        const {email , password}= req.body ;
+
+        const user = await User.findOne({email});
+
+        if(!user)
+            return res.status(400).json({message:"invalid credentials"});
+
+        const match = await bcrypt.compare(password,user.password);
+
+        if(!match)
+            return res.status(400).json({message:"invalid credentials"});
+
+        const token = jwt.sign(
+            {id:user._id  , role: user.role },
+             process.env.JWT_SECRET,
+            {expiresIn: process.env.JWT_EXPIRES_IN}
+        );
+
+        res.json({
+            token
+        });
+    }catch(error){
+        next(error)
+    }
+}
